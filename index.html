@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ungaretti — Studio di Federico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET E BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #F5EDDC; color: #2C3E2E; font-family: 'Nunito', sans-serif; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+button:disabled { cursor: not-allowed; opacity: 0.4; }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+
+.header {
+  position: sticky; top: 0; z-index: 40;
+  background: #F5EDDC;
+  border-bottom: 1px solid #D4C4A0;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+.brand { display: flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s; }
+.brand:hover { opacity: 0.7; }
+.brand-icon {
+  width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  background: #2C3E2E; color: #F5EDDC;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-title {
+  font-family: 'Fraunces', serif; font-size: 1.05rem; color: #2C3E2E;
+  line-height: 1.1; font-weight: 600;
+}
+.brand-sub {
+  font-size: 0.72rem; color: #6B5D3F;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+.header-right { display: flex; align-items: center; gap: 0.5rem; }
+
+.save-indicator {
+  display: flex; align-items: center; gap: 0.38rem;
+  padding: 0.38rem 0.625rem;
+  border-radius: 999px;
+  background: #EADFC5;
+  font-size: 0.75rem; font-weight: 600;
+}
+.save-indicator.saving { color: #8B7355; }
+.save-indicator.saved { color: #3E6B2E; }
+.save-indicator.error { color: #A0412E; }
+
+.btn-print {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: #2C3E2E; color: #F5EDDC;
+  font-size: 0.85rem; font-weight: 700;
+  transition: transform 0.1s;
+}
+.btn-print:active { transform: scale(0.95); }
+
+main { padding: 1.5rem 0 5rem; }
+
+/* ============================================================
+   HOME
+   ============================================================ */
+.home-hero { text-align: center; margin-bottom: 2rem; }
+.hero-eyebrow {
+  font-size: 0.8rem; color: #8B7355;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.hero-title {
+  font-family: 'Fraunces', serif; font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #2C3E2E; line-height: 1.1; margin-bottom: 1rem;
+}
+.hero-sub {
+  font-size: 1.05rem; color: #4A4536;
+  max-width: 42ch; margin: 0 auto; line-height: 1.5;
+}
+
+.cards-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .cards-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.poem-card {
+  text-align: left;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: #FBF5E6;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 0 rgba(44,62,46,0.08);
+  display: block; width: 100%;
+}
+.poem-card:hover { transform: scale(1.01); }
+.poem-card:active { transform: scale(0.99); }
+
+.poem-card-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.poem-num {
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-family: 'Fraunces', serif;
+  font-weight: 600; font-size: 1.05rem;
+}
+.poem-card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem; font-weight: 600;
+  line-height: 1.1; margin-bottom: 0.3rem;
+}
+.poem-card-place {
+  font-size: 0.75rem; color: #8B7355;
+  font-style: italic; margin-bottom: 1rem;
+}
+.poem-card-quote {
+  font-family: 'Fraunces', serif;
+  font-size: 0.95rem; font-style: italic;
+  color: #4A4536; line-height: 1.5;
+  padding-left: 0.75rem;
+}
+.poem-card-cta {
+  margin-top: 1rem;
+  display: flex; align-items: center; gap: 0.38rem;
+  font-size: 0.85rem; font-weight: 700;
+}
+.poem-card:hover .cta-arrow { transform: translateX(0.25rem); }
+.cta-arrow { transition: transform 0.2s; display: inline-block; }
+
+.progress-ring { position: relative; width: 2rem; height: 2rem; font-size: 0.78rem; font-weight: 700; }
+.progress-ring svg { width: 2rem; height: 2rem; transform: rotate(-90deg); }
+.progress-ring-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem;
+}
+
+.legend-box {
+  margin-top: 2.5rem; padding: 1.25rem;
+  border-radius: 1rem; background: #EADFC5;
+}
+.legend-title {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800; color: #2C3E2E; font-size: 0.95rem;
+}
+.legend-text { color: #4A4536; font-size: 0.92rem; line-height: 1.55; }
+
+/* ============================================================
+   POEM VIEW
+   ============================================================ */
+.poem-header {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  color: #FBF5E6;
+}
+.poem-back {
+  display: inline-flex; align-items: center; gap: 0.38rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9; font-size: 0.8rem; font-weight: 600;
+  transition: opacity 0.2s;
+}
+.poem-back:hover { opacity: 1; }
+.poem-header-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 600; line-height: 1;
+}
+.poem-header-place {
+  font-size: 0.78rem; font-style: italic;
+  opacity: 0.85; margin-top: 0.25rem;
+}
+
+.tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.tab-btn {
+  display: flex; align-items: center; gap: 0.38rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  background: #FBF5E6; color: #4A4536;
+  font-size: 0.85rem; font-weight: 700;
+  border: 2px solid transparent;
+  transition: transform 0.1s, background 0.2s;
+}
+.tab-btn:active { transform: scale(0.95); }
+.tab-btn.active { color: #FBF5E6; }
+
+.content-card {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: #FBF5E6;
+  border: 2px solid;
+}
+@media (min-width: 640px) { .content-card { padding: 1.75rem; } }
+
+.section-label {
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+.section-label::before {
+  content: ''; display: block;
+  height: 2px; width: 2rem;
+  background: currentColor;
+}
+
+/* Tab: Poesia */
+.poem-text-box {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border: 1px dashed;
+  text-align: center;
+}
+@media (min-width: 640px) { .poem-text-box { padding: 2.5rem; } }
+.poem-text {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  color: #2C3E2E; line-height: 1.8;
+}
+.poem-text-line { min-height: 1.2em; }
+.poem-text-footer {
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid;
+  font-size: 0.8rem; color: #8B7355; font-style: italic;
+}
+
+.tip-box {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #EADFC5;
+  display: flex; gap: 0.75rem;
+}
+.tip-box-icon { flex-shrink: 0; margin-top: 0.125rem; color: #8B5A2B; }
+.tip-box-text { color: #4A4536; font-size: 0.92rem; line-height: 1.55; }
+
+/* Tab: Parafrasi */
+.parafrasi-main {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  margin-bottom: 1.25rem;
+}
+.label-mini {
+  font-size: 0.78rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.parafrasi-main-text {
+  font-size: 1.05rem; color: #2C3E2E; line-height: 1.65;
+}
+.step-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.step-item {
+  display: flex; gap: 0.75rem; align-items: flex-start;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border-left: 4px solid;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-family: 'Fraunces', serif;
+  font-weight: 600; font-size: 0.85rem;
+}
+.step-highlight {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 1.05rem; margin-bottom: 0.3rem; font-weight: 500;
+}
+.step-explain { font-size: 0.95rem; color: #4A4536; line-height: 1.55; }
+
+/* Tab: Metafore */
+.met-intro {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #FFF4CC;
+  margin-bottom: 1.25rem;
+  display: flex; gap: 0.75rem;
+}
+.met-intro-icon { flex-shrink: 0; margin-top: 0.125rem; color: #B8860B; }
+.met-intro-text { color: #4A4536; font-size: 0.92rem; line-height: 1.55; }
+
+.met-card {
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border: 2px solid;
+  overflow: hidden;
+}
+.met-toggle {
+  width: 100%;
+  padding: 1rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  text-align: left;
+  transition: background 0.2s;
+}
+.met-toggle.open { color: #FBF5E6; }
+.met-label {
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.8; margin-bottom: 0.125rem;
+}
+.met-expr {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 1.15rem; font-weight: 500;
+}
+.met-arrow { flex-shrink: 0; transition: transform 0.2s; }
+.met-arrow.open { transform: rotate(90deg); }
+
+.met-body { padding: 1.25rem; }
+.met-meaning {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #FBF5E6;
+  margin-bottom: 1rem;
+}
+.met-meaning-label {
+  font-size: 0.78rem; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.met-meaning-text {
+  font-size: 1rem; color: #2C3E2E; font-weight: 600;
+}
+.met-steps { display: flex; flex-direction: column; gap: 0.5rem; }
+.met-step {
+  display: flex; gap: 0.75rem; align-items: flex-start;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #FBF5E6;
+  transition: opacity 0.3s, background 0.3s;
+}
+.met-step.hidden { background: #EADFC5; opacity: 0.5; }
+.met-step-num {
+  flex-shrink: 0;
+  width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-weight: 800; font-size: 0.75rem;
+}
+.met-step-text {
+  flex: 1; font-size: 0.98rem;
+  color: #2C3E2E; line-height: 1.5;
+}
+.met-next-btn {
+  margin-top: 1rem; width: 100%;
+  padding: 0.625rem;
+  border-radius: 999px;
+  color: #FBF5E6; font-weight: 700; font-size: 0.9rem;
+  transition: transform 0.1s;
+}
+.met-next-btn:active { transform: scale(0.95); }
+
+/* Tab: Riordina */
+.help-box {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  margin-bottom: 1.25rem;
+}
+.help-box-text { color: #4A4536; font-size: 0.92rem; line-height: 1.55; }
+
+.mini-label {
+  font-size: 0.78rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.ordered-box {
+  min-height: 7.5rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border: 2px dashed;
+  margin-bottom: 1rem;
+}
+.ordered-empty {
+  font-family: 'Fraunces', serif; font-style: italic;
+  color: #8B7355; text-align: center;
+  padding: 1rem;
+}
+.ordered-list { display: flex; flex-direction: column; gap: 0.375rem; }
+.ordered-line {
+  width: 100%;
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #FBF5E6;
+  border: 1px solid;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+.ordered-line:hover { opacity: 0.8; }
+.ordered-line:active { transform: scale(0.98); }
+.ordered-line-num {
+  flex-shrink: 0;
+  width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-weight: 800; font-size: 0.7rem;
+}
+.ordered-line-text {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 1.05rem; color: #2C3E2E; flex: 1;
+}
+
+.pool { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.pool-chip {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  color: #2C3E2E;
+  border: 1px solid;
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 1rem;
+  transition: all 0.15s;
+}
+.pool-chip:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.pool-chip:active { transform: scale(0.95); }
+
+.action-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn-primary {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 999px;
+  color: #FBF5E6; font-weight: 700; font-size: 0.9rem;
+  transition: transform 0.1s;
+}
+.btn-primary:active:not(:disabled) { transform: scale(0.95); }
+.btn-secondary {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 999px;
+  background: transparent;
+  border: 2px solid;
+  font-weight: 700; font-size: 0.9rem;
+  transition: transform 0.1s;
+}
+.btn-secondary:active { transform: scale(0.95); }
+
+.feedback-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  display: flex; gap: 0.75rem;
+}
+.feedback-box.success { background: #D8E8D4; }
+.feedback-box.error { background: #F5D8C8; }
+.feedback-icon { flex-shrink: 0; margin-top: 0.125rem; }
+.feedback-box.success .feedback-icon { color: #3E6B2E; }
+.feedback-box.error .feedback-icon { color: #A0412E; }
+.feedback-title { font-weight: 800; margin-bottom: 0.2rem; }
+.feedback-box.success .feedback-title { color: #3E6B2E; }
+.feedback-box.error .feedback-title { color: #A0412E; }
+.feedback-text { font-size: 0.9rem; color: #2C3E2E; }
+
+/* Tab: Crocette */
+.q-cards { display: flex; flex-direction: column; gap: 1.25rem; }
+.q-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border: 2px solid;
+}
+.q-header {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.q-num {
+  flex-shrink: 0;
+  width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-family: 'Fraunces', serif;
+  font-weight: 600; font-size: 0.85rem;
+  margin-top: 0.125rem;
+}
+.q-text {
+  font-weight: 700; font-size: 1.02rem;
+  color: #2C3E2E; line-height: 1.4;
+}
+.options { display: flex; flex-direction: column; gap: 0.5rem; }
+.opt {
+  width: 100%;
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #FBF5E6;
+  border: 2px solid;
+  text-align: left;
+  font-size: 0.95rem; font-weight: 500;
+  transition: transform 0.1s;
+  color: #2C3E2E;
+}
+.opt:active { transform: scale(0.98); }
+.opt.chosen { font-weight: 700; }
+.opt.correct { background: #D8E8D4; border-color: #3E6B2E; }
+.opt.wrong { background: #F5D8C8; border-color: #A0412E; }
+.opt-marker {
+  flex-shrink: 0;
+  width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #FBF5E6; font-size: 0.75rem; font-weight: 700;
+}
+.q-explain {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  display: flex; gap: 0.5rem;
+  font-size: 0.9rem; color: #2C3E2E; line-height: 1.5;
+}
+.q-explain.good { background: #D8E8D4; }
+.q-explain.bad { background: #FFF4CC; }
+.q-explain-icon { flex-shrink: 0; margin-top: 0.125rem; }
+
+/* Tab: Scrivi */
+.w-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #F5EDDC;
+  border: 2px solid;
+  margin-bottom: 1rem;
+}
+.w-header {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.w-icon { flex-shrink: 0; margin-top: 0.125rem; }
+.w-text {
+  font-weight: 700; font-size: 1.02rem;
+  color: #2C3E2E; line-height: 1.4;
+}
+.w-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #FBF5E6;
+  border: 2px solid;
+  color: #2C3E2E;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem; line-height: 1.55;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.w-textarea:focus { outline: none; }
+.w-textarea::placeholder { color: #B0A080; font-style: italic; }
+.w-count {
+  margin-top: 0.5rem; text-align: right;
+  font-size: 0.75rem; color: #8B7355;
+}
+
+.final-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #D8E8D4;
+  display: flex; gap: 0.75rem;
+}
+.final-icon { flex-shrink: 0; margin-top: 0.125rem; color: #3E6B2E; }
+.final-text { color: #2C3E2E; font-size: 0.92rem; line-height: 1.55; }
+
+/* Nav */
+.tab-nav {
+  margin-top: 1.25rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+.nav-pos { font-size: 0.8rem; color: #8B7355; font-weight: 600; }
+
+/* Icon base */
+.icon { width: 1rem; height: 1rem; stroke-width: 2; flex-shrink: 0; }
+.icon-sm { width: 0.875rem; height: 0.875rem; }
+.icon-md { width: 1.25rem; height: 1.25rem; }
+.icon-lg { width: 1.5rem; height: 1.5rem; }
+
+/* Hide print view by default */
+.print-only { display: none; }
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  @page { size: A4; margin: 1.5cm; }
+  body { background: white !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+
+  .print-cover {
+    text-align: center;
+    padding-bottom: 1.5cm;
+    border-bottom: 2px solid #2C3E2E;
+    margin-bottom: 1cm;
+  }
+  .print-header {
+    font-family: 'Fraunces', serif;
+    font-size: 22pt;
+    font-weight: 600;
+    color: #2C3E2E;
+    margin-bottom: 0.8cm;
+  }
+  .print-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14pt;
+    font-weight: 700;
+    color: #2C3E2E;
+  }
+  .print-date {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11pt;
+    color: #555;
+    margin-top: 0.3cm;
+  }
+  .print-poem {
+    page-break-before: always;
+    padding-top: 0.5cm;
+  }
+  .print-poem-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20pt;
+    font-weight: 600;
+    color: #2C3E2E;
+    margin: 0;
+  }
+  .print-poem-place {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10pt;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 0.5cm;
+  }
+  .print-poem-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13pt;
+    line-height: 1.8;
+    text-align: center;
+    padding: 0.5cm;
+    border: 1px dashed #999;
+    margin-bottom: 0.6cm;
+  }
+  .print-section {
+    margin-bottom: 0.5cm;
+    break-inside: avoid;
+  }
+  .print-section-label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 9pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #2C3E2E;
+    border-bottom: 1px solid #2C3E2E;
+    padding-bottom: 2pt;
+    margin-bottom: 0.25cm;
+  }
+  .print-section p,
+  .print-section ol,
+  .print-section li {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #222;
+  }
+  .print-section ol { padding-left: 1cm; }
+  .print-q {
+    margin-bottom: 0.3cm;
+    break-inside: avoid;
+  }
+  .print-q-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11pt;
+    color: #222;
+    margin-bottom: 2pt;
+  }
+  .print-q-given {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10.5pt;
+    color: #333;
+    padding-left: 0.5cm;
+  }
+  .print-q-correct {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10pt;
+    font-style: italic;
+    color: #3E6B2E;
+    padding-left: 0.5cm;
+  }
+  .print-q-open {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11pt;
+    color: #222;
+    padding: 0.2cm;
+    border-left: 3px solid #2C3E2E;
+    padding-left: 0.4cm;
+    min-height: 1cm;
+    white-space: pre-wrap;
+  }
+  .print-empty {
+    font-style: italic;
+    color: #999;
+    font-size: 10pt;
+  }
+  .print-tiny {
+    font-size: 8pt;
+    color: #888;
+    font-style: italic;
+    margin-top: 2pt;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header no-print">
+  <div class="wrap header-inner">
+    <button class="brand" onclick="app.goHome()">
+      <div class="brand-icon">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+      </div>
+      <div style="text-align:left">
+        <div class="brand-title">Ungaretti</div>
+        <div class="brand-sub">Studio di Federico</div>
+      </div>
+    </button>
+
+    <div class="header-right">
+      <div id="save-indicator" class="save-indicator saved">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Salvato</span>
+      </div>
+      <button class="btn-print" onclick="window.print()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>Stampa PDF</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+<main>
+  <div class="wrap">
+    <div id="app-root" class="no-print"></div>
+    <div id="print-root" class="print-only"></div>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// DATI DELLE POESIE
+// ============================================================
+const POEMS = [
+  {
+    id: 'soldati',
+    title: 'Soldati',
+    place: 'Bosco di Courton, luglio 1918',
+    color: '#9C6B3F',
+    accent: '#D4A574',
+    lines: ["Si sta come", "d'autunno", "sugli alberi", "le foglie."],
+    parafrasi: "Noi soldati in guerra stiamo come le foglie sugli alberi in autunno.",
+    parafrasiSteps: [
+      { highlight: "Si sta come", explain: "Noi soldati stiamo come..." },
+      { highlight: "d'autunno sugli alberi le foglie", explain: "...stanno le foglie sugli alberi quando è autunno." }
+    ],
+    metaphors: [
+      {
+        expression: "le foglie in autunno",
+        meaning: "i soldati in guerra",
+        steps: [
+          "Pensa alle foglie in autunno. Cosa fanno? 🍂",
+          "CADONO. Basta un po' di vento e cadono giù.",
+          "I soldati in guerra sono come quelle foglie: in ogni momento possono morire.",
+          "Ungaretti vuole dirci: «In guerra la vita è molto fragile.»"
+        ]
+      }
+    ],
+    shuffled: ["le foglie.", "Si sta come", "sugli alberi", "d'autunno"],
+    correctOrder: ["Si sta come", "d'autunno", "sugli alberi", "le foglie."],
+    mc: [
+      {
+        q: "A cosa paragona i soldati Ungaretti?",
+        options: ["A uccelli nel cielo", "Alle foglie in autunno", "A fiori in primavera"],
+        correct: 1,
+        explain: "I soldati sono come le foglie che possono cadere in ogni momento."
+      },
+      {
+        q: "Cosa succede alle foglie in autunno?",
+        options: ["Diventano verdi", "Cadono dagli alberi", "Crescono più grandi"],
+        correct: 1,
+        explain: "In autunno le foglie cadono dagli alberi."
+      },
+      {
+        q: "Cosa ci vuole dire questa poesia?",
+        options: [
+          "I soldati sono felici in guerra",
+          "I soldati possono morire in ogni momento",
+          "I soldati vanno in vacanza in autunno"
+        ],
+        correct: 1,
+        explain: "In guerra la vita dei soldati è fragile, come quella delle foglie."
+      }
+    ],
+    open: [
+      "Prova a spiegare con parole tue perché le foglie in autunno sono come i soldati in guerra.",
+      "Hai mai visto le foglie cadere? Come si muovono quando cadono?"
+    ]
+  },
+  {
+    id: 'san-martino',
+    title: 'San Martino del Carso',
+    place: "Valloncello dell'Albero Isolato, agosto 1916",
+    color: '#6B4226',
+    accent: '#C49B7F',
+    lines: [
+      "Di queste case", "non è rimasto", "che qualche", "brandello di muro.",
+      "", "Di tanti", "che mi corrispondevano", "non è rimasto", "neppure tanto.",
+      "", "Ma nel cuore", "nessuna croce manca.",
+      "", "È il mio cuore", "il paese più straziato."
+    ],
+    parafrasi: "Di queste case rimangono solo pezzi rotti di muro. Di tanti amici e compagni che mi scrivevano lettere non è rimasto quasi nessuno. Ma nel mio cuore ricordo ogni compagno morto, come se dentro di me ci fosse un cimitero pieno di croci. Il mio cuore fa più male di questo paese distrutto.",
+    parafrasiSteps: [
+      { highlight: "brandello di muro", explain: "Solo piccoli pezzi rotti di muro sono rimasti delle case." },
+      { highlight: "che mi corrispondevano", explain: "I suoi compagni che gli scrivevano lettere." },
+      { highlight: "nel cuore nessuna croce manca", explain: "Ungaretti ricorda tutti i compagni morti nel suo cuore, come un cimitero pieno di croci." },
+      { highlight: "il paese più straziato", explain: "Il suo cuore è rotto dal dolore più di quanto sia distrutto il paese." }
+    ],
+    metaphors: [
+      {
+        expression: "brandello di muro",
+        meaning: "Un piccolo pezzo di muro rotto",
+        steps: [
+          "«Brandello» vuol dire un pezzo piccolo e strappato.",
+          "Come quando una maglietta si rompe e resta solo un pezzetto.",
+          "Ungaretti parla dei muri rimasti in piedi dopo i bombardamenti."
+        ]
+      },
+      {
+        expression: "nel cuore nessuna croce manca",
+        meaning: "Ungaretti ricorda tutti i suoi amici morti",
+        steps: [
+          "Nei cimiteri ci sono le croci sopra le tombe. ✝️",
+          "Ungaretti dice: dentro il mio cuore c'è una croce per OGNI amico morto.",
+          "Vuol dire: «Li ricordo tutti, nessuno è dimenticato.»"
+        ]
+      },
+      {
+        expression: "il mio cuore è il paese più straziato",
+        meaning: "Il suo cuore fa più male del paese distrutto",
+        steps: [
+          "«Straziato» vuol dire rotto dal dolore, distrutto.",
+          "Il paese è stato distrutto dalle bombe.",
+          "Ma il cuore di Ungaretti fa ancora più male, perché ha perso gli amici."
+        ]
+      }
+    ],
+    shuffled: [
+      "È il mio cuore il paese più straziato.",
+      "Di queste case non è rimasto che qualche brandello di muro.",
+      "Ma nel cuore nessuna croce manca.",
+      "Di tanti che mi corrispondevano non è rimasto neppure tanto."
+    ],
+    correctOrder: [
+      "Di queste case non è rimasto che qualche brandello di muro.",
+      "Di tanti che mi corrispondevano non è rimasto neppure tanto.",
+      "Ma nel cuore nessuna croce manca.",
+      "È il mio cuore il paese più straziato."
+    ],
+    mc: [
+      {
+        q: "Cos'è rimasto delle case del paese?",
+        options: ["Tutto come prima", "Qualche pezzo di muro", "Solo i tetti"],
+        correct: 1,
+        explain: "Solo piccoli brandelli di muro sono rimasti dopo la guerra."
+      },
+      {
+        q: "Dove Ungaretti ricorda i suoi compagni morti?",
+        options: ["Nelle foto sul muro", "Nel suo cuore", "In un libro"],
+        correct: 1,
+        explain: "Li ricorda dentro il suo cuore, come in un cimitero invisibile."
+      },
+      {
+        q: "Cosa significa «È il mio cuore il paese più straziato»?",
+        options: [
+          "Il cuore è bello come il paese",
+          "Il suo cuore è rotto dal dolore più del paese distrutto",
+          "Il paese si chiama «Cuore»"
+        ],
+        correct: 1,
+        explain: "Il suo cuore fa più male di quanto sia distrutto il paese."
+      },
+      {
+        q: "Chi sono «quelli che mi corrispondevano»?",
+        options: [
+          "Le persone che gli scrivevano lettere",
+          "Le persone che gli somigliavano",
+          "Le persone del paese"
+        ],
+        correct: 0,
+        explain: "«Corrispondere» qui vuol dire scriversi lettere."
+      }
+    ],
+    open: [
+      "Cosa prova Ungaretti quando pensa ai suoi compagni morti?",
+      "Secondo te, perché il cuore può far più male di un paese distrutto?"
+    ]
+  },
+  {
+    id: 'veglia',
+    title: 'Veglia',
+    place: 'Cima Quattro, 23 dicembre 1915',
+    color: '#3E4C3A',
+    accent: '#8BA888',
+    lines: ["Un'intera nottata", "buttato vicino", "a un compagno", "massacrato"],
+    parafrasi: "Per tutta una notte sono rimasto steso a terra vicino a un mio compagno ucciso in modo violento.",
+    parafrasiSteps: [
+      { highlight: "Un'intera nottata", explain: "Per tutta una notte, dalla sera fino al mattino." },
+      { highlight: "buttato vicino", explain: "Disteso a terra, senza forze." },
+      { highlight: "a un compagno massacrato", explain: "Vicino a un suo amico soldato, ucciso con violenza." }
+    ],
+    metaphors: [
+      {
+        expression: "Veglia (il titolo)",
+        meaning: "Stare svegli di notte vicino a qualcuno",
+        steps: [
+          "«Vegliare» vuol dire stare svegli quando gli altri dormono.",
+          "A volte si fa veglia accanto a una persona morta, per starle vicino.",
+          "Ungaretti passa tutta la notte sveglio, vicino al compagno morto."
+        ]
+      },
+      {
+        expression: "buttato",
+        meaning: "Steso a terra senza forze",
+        steps: [
+          "«Buttato» fa pensare a qualcosa gettato via.",
+          "Ungaretti si sente così: senza forze, a terra.",
+          "La guerra lo ha messo in ginocchio."
+        ]
+      }
+    ],
+    shuffled: ["massacrato", "Un'intera nottata", "a un compagno", "buttato vicino"],
+    correctOrder: ["Un'intera nottata", "buttato vicino", "a un compagno", "massacrato"],
+    mc: [
+      {
+        q: "Dove si trova Ungaretti in questa poesia?",
+        options: ["A casa sua", "In guerra, steso a terra", "In ospedale"],
+        correct: 1,
+        explain: "È in guerra, buttato a terra di notte."
+      },
+      {
+        q: "Chi c'è vicino a lui?",
+        options: ["Un amico vivo", "Un compagno ucciso", "Nessuno"],
+        correct: 1,
+        explain: "Un compagno morto in battaglia."
+      },
+      {
+        q: "Per quanto tempo è rimasto così?",
+        options: ["Un'ora", "Tutta la notte", "Tutto il giorno"],
+        correct: 1,
+        explain: "«Un'intera nottata» = tutta la notte."
+      },
+      {
+        q: "Cosa vuol dire «massacrato»?",
+        options: ["Addormentato", "Ucciso in modo violento", "Ferito leggermente"],
+        correct: 1,
+        explain: "«Massacrato» vuol dire ucciso con grande violenza."
+      }
+    ],
+    open: [
+      "Prova a immaginare Ungaretti in quella notte. Cosa può provare?",
+      "Secondo te, perché il titolo è «Veglia»?"
+    ]
+  },
+  {
+    id: 'mattina',
+    title: 'Mattina',
+    place: 'Santa Maria La Longa, 26 gennaio 1917',
+    color: '#C08552',
+    accent: '#F3D9B1',
+    lines: ["M'illumino", "d'immenso."],
+    parafrasi: "La luce del mattino mi riempie dentro. Guardando il cielo (o il mare) mi sento pieno di luce e di spazio infinito.",
+    parafrasiSteps: [
+      { highlight: "M'illumino", explain: "Divento pieno di luce dentro di me." },
+      { highlight: "d'immenso", explain: "Di qualcosa di molto grande, senza fine, come il cielo o il mare." }
+    ],
+    metaphors: [
+      {
+        expression: "M'illumino",
+        meaning: "Mi riempio di luce dentro",
+        steps: [
+          "Quando accendi la luce in una stanza buia, la stanza si illumina. 💡",
+          "Ungaretti dice che LUI si illumina dentro.",
+          "Come se dentro di lui si accendesse una grande lampadina."
+        ]
+      },
+      {
+        expression: "d'immenso",
+        meaning: "Di qualcosa di grandissimo",
+        steps: [
+          "«Immenso» vuol dire grandissimo, senza fine.",
+          "Il cielo è immenso. Il mare è immenso. 🌊",
+          "Ungaretti si riempie di questa grandezza: si sente grande dentro."
+        ]
+      }
+    ],
+    shuffled: ["d'immenso.", "M'illumino"],
+    correctOrder: ["M'illumino", "d'immenso."],
+    mc: [
+      {
+        q: "Cosa vuol dire «M'illumino»?",
+        options: [
+          "Accendo la luce in cucina",
+          "Divento pieno di luce dentro",
+          "Ho freddo la mattina"
+        ],
+        correct: 1,
+        explain: "Ungaretti si riempie di luce dentro."
+      },
+      {
+        q: "Cosa vuol dire «immenso»?",
+        options: ["Piccolo e stretto", "Molto grande, senza fine", "Rotto in due"],
+        correct: 1,
+        explain: "«Immenso» vuol dire grandissimo."
+      },
+      {
+        q: "Qual è il momento della giornata in questa poesia?",
+        options: ["La notte buia", "Il mattino, con la luce", "Il pomeriggio d'estate"],
+        correct: 1,
+        explain: "Il titolo è «Mattina» e parla di luce che arriva."
+      },
+      {
+        q: "Questa poesia è:",
+        options: [
+          "Triste, parla di morti",
+          "Luminosa, un momento di gioia dopo la guerra",
+          "Arrabbiata contro qualcuno"
+        ],
+        correct: 1,
+        explain: "È un momento di luce e pace dopo tanto dolore."
+      }
+    ],
+    open: [
+      "Prova a descrivere un momento in cui anche tu ti sei sentito «pieno di luce».",
+      "Con solo due parole Ungaretti dice tantissimo. Cosa ti fa pensare questa poesia?"
+    ]
+  }
+];
+
+const TABS = [
+  { id: 'poesia', label: 'La poesia', icon: 'feather' },
+  { id: 'parafrasi', label: 'Cosa vuol dire', icon: 'book' },
+  { id: 'metafore', label: 'Le metafore', icon: 'bulb' },
+  { id: 'riordina', label: 'Riordina', icon: 'puzzle' },
+  { id: 'crocette', label: 'Domande', icon: 'list' },
+  { id: 'scrivi', label: 'Scrivi tu', icon: 'pen' }
+];
+
+// ============================================================
+// ICONE SVG (stroke-based, minimaliste)
+// ============================================================
+const ICONS = {
+  feather: '<path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>',
+  book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  bulb: '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>',
+  puzzle: '<path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.23 8.77c.24-.24.581-.353.917-.303.515.077.877.528 1.073 1.01a2.5 2.5 0 1 0 3.259-3.259c-.482-.196-.933-.558-1.01-1.073-.05-.336.062-.676.303-.917l1.525-1.525A2.402 2.402 0 0 1 12 1.998c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02Z"/>',
+  list: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+  pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  arrowR: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  arrowL: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  reset: '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  cloudCheck: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>'
+};
+
+function icon(name, cls = 'icon') {
+  return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+}
+
+// ============================================================
+// UTILITÀ
+// ============================================================
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function arraysEqual(a, b) {
+  if (!a || !b || a.length !== b.length) return false;
+  return a.every((x, i) => x === b[i]);
+}
+
+function computeProgress(poem, s) {
+  let total = 0, done = 0;
+  total += 1;
+  if (s.reorder && arraysEqual(s.reorder, poem.correctOrder)) done += 1;
+  total += poem.mc.length;
+  (s.mc || []).forEach((v, i) => { if (v === poem.mc[i]?.correct) done += 1; });
+  total += poem.open.length;
+  (s.open || []).forEach(v => { if (v && v.trim().length >= 10) done += 1; });
+  return Math.round((done / total) * 100);
+}
+
+// ============================================================
+// STATE + STORAGE
+// ============================================================
+const STORAGE_KEY = 'ungaretti-federico-v1';
+
+const app = {
+  view: 'home',           // 'home' | 'poem'
+  poemId: null,
+  tab: 'poesia',
+  state: {},              // salvataggio risposte
+  metaphorOpen: 0,        // indice metafora aperta
+  metaphorRevealed: {},   // chiave "mi-si" -> true
+  reorderChecked: false,
+  reorderCorrect: false,
+  saveTimeout: null,
+
+  init() {
+    this.loadState();
+    this.render();
+  },
+
+  loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) this.state = JSON.parse(raw);
+    } catch (e) { this.state = {}; }
+  },
+
+  save() {
+    this.setSaveStatus('saving');
+    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+    this.saveTimeout = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+        this.setSaveStatus('saved');
+      } catch (e) {
+        this.setSaveStatus('error');
+      }
+    }, 500);
+  },
+
+  setSaveStatus(status) {
+    const el = document.getElementById('save-indicator');
+    if (!el) return;
+    el.className = 'save-indicator ' + status;
+    const iconName = status === 'saved' ? 'cloudCheck' : (status === 'saving' ? 'save' : 'alert');
+    const text = status === 'saved' ? 'Salvato' : (status === 'saving' ? 'Salvo...' : 'Errore');
+    el.innerHTML = icon(iconName, 'icon icon-sm') + '<span>' + text + '</span>';
+  },
+
+  updateState(section, value) {
+    if (!this.state[this.poemId]) this.state[this.poemId] = {};
+    this.state[this.poemId][section] = value;
+    this.save();
+  },
+
+  getPoem() { return POEMS.find(p => p.id === this.poemId); },
+  getPoemState() { return this.state[this.poemId] || {}; },
+
+  goHome() {
+    this.view = 'home';
+    this.poemId = null;
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  openPoem(id) {
+    this.poemId = id;
+    this.tab = 'poesia';
+    this.view = 'poem';
+    this.metaphorOpen = 0;
+    this.metaphorRevealed = {};
+    this.reorderChecked = false;
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  setTab(id) {
+    this.tab = id;
+    this.reorderChecked = false;
+    this.render();
+  },
+
+  // ---- Metafore ----
+  toggleMetaphor(idx) {
+    this.metaphorOpen = this.metaphorOpen === idx ? -1 : idx;
+    this.render();
+  },
+  revealNextStep(mi) {
+    const m = this.getPoem().metaphors[mi];
+    for (let si = 0; si < m.steps.length; si++) {
+      if (!this.metaphorRevealed[mi + '-' + si]) {
+        this.metaphorRevealed[mi + '-' + si] = true;
+        break;
+      }
+    }
+    this.render();
+  },
+
+  // ---- Riordina ----
+  addLine(line) {
+    const cur = this.getPoemState().reorder || [];
+    this.reorderChecked = false;
+    this.updateState('reorder', [...cur, line]);
+    this.render();
+  },
+  removeLine(idx) {
+    const cur = this.getPoemState().reorder || [];
+    this.reorderChecked = false;
+    this.updateState('reorder', cur.filter((_, i) => i !== idx));
+    this.render();
+  },
+  checkReorder() {
+    const poem = this.getPoem();
+    const cur = this.getPoemState().reorder || [];
+    this.reorderCorrect = arraysEqual(cur, poem.correctOrder);
+    this.reorderChecked = true;
+    this.render();
+  },
+  resetReorder() {
+    this.reorderChecked = false;
+    this.updateState('reorder', []);
+    this.render();
+  },
+
+  // ---- Crocette ----
+  setAnswer(qi, oi) {
+    const cur = this.getPoemState().mc || [];
+    const next = [...cur];
+    next[qi] = oi;
+    this.updateState('mc', next);
+    this.render();
+  },
+
+  // ---- Scrivi ----
+  setOpen(qi, text) {
+    const cur = this.getPoemState().open || [];
+    const next = [...cur];
+    next[qi] = text;
+    this.updateState('open', next);
+    // Aggiorna solo contatore senza re-render completo
+    const counter = document.getElementById('count-' + qi);
+    if (counter) counter.textContent = text.length + ' lettere scritte';
+  },
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+  render() {
+    const root = document.getElementById('app-root');
+    if (this.view === 'home') {
+      root.innerHTML = this.renderHome();
+    } else {
+      root.innerHTML = this.renderPoem();
+    }
+    this.renderPrint();
+  },
+
+  renderHome() {
+    const cards = POEMS.map((p, i) => {
+      const prog = computeProgress(p, this.state[p.id] || {});
+      const quote = p.lines.filter(l => l).slice(0, 2).join(' / ');
+      return `
+        <button class="poem-card" onclick="app.openPoem('${p.id}')"
+          style="border: 2px solid ${p.accent}">
+          <div class="poem-card-top">
+            <div class="poem-num" style="background:${p.color}">${i + 1}</div>
+            ${this.renderProgressRing(prog, p.color)}
+          </div>
+          <h2 class="poem-card-title" style="color:${p.color}">${esc(p.title)}</h2>
+          <div class="poem-card-place">${esc(p.place)}</div>
+          <div class="poem-card-quote" style="border-left: 3px solid ${p.accent}">
+            «${esc(quote)}...»
+          </div>
+          <div class="poem-card-cta" style="color:${p.color}">
+            <span>Inizia a studiare</span>
+            <span class="cta-arrow">${icon('arrowR', 'icon')}</span>
+          </div>
+        </button>
+      `;
+    }).join('');
+
+    return `
+      <section class="home-hero">
+        <div class="hero-eyebrow">Le poesie di Giuseppe Ungaretti</div>
+        <h1 class="hero-title">Ciao Federico!</h1>
+        <p class="hero-sub">
+          Qui puoi studiare <strong>4 poesie di Ungaretti</strong>.
+          Scegli una poesia per iniziare. Quando hai finito, usa il pulsante
+          <strong style="color:#2C3E2E">Stampa PDF</strong> in alto a destra.
+        </p>
+      </section>
+
+      <section class="cards-grid">${cards}</section>
+
+      <section class="legend-box">
+        <div class="legend-title">
+          ${icon('bulb', 'icon icon-md')}
+          <span>Come funziona</span>
+        </div>
+        <p class="legend-text">
+          Ogni poesia ha <strong>6 schede</strong>: leggi la poesia, scopri cosa vuol dire,
+          studia le metafore passo passo, riordina i versi, rispondi alle domande a crocette
+          e scrivi le tue risposte. Tutto viene <strong>salvato automaticamente</strong>. 💾
+        </p>
+      </section>
+    `;
+  },
+
+  renderProgressRing(progress, color) {
+    const R = 13, C = 2 * Math.PI * R;
+    const dashOffset = C * (1 - progress / 100);
+    return `
+      <div class="progress-ring" style="color:${color}">
+        <svg viewBox="0 0 32 32" style="width:2rem;height:2rem;transform:rotate(-90deg)">
+          <circle cx="16" cy="16" r="${R}" fill="none" stroke="#E5D5B5" stroke-width="3"/>
+          <circle cx="16" cy="16" r="${R}" fill="none" stroke="${color}" stroke-width="3"
+            stroke-dasharray="${C}" stroke-dashoffset="${dashOffset}" stroke-linecap="round"
+            style="transition: stroke-dashoffset 0.5s"/>
+        </svg>
+        <div class="progress-ring-text">${progress}%</div>
+      </div>
+    `;
+  },
+
+  renderPoem() {
+    const p = this.getPoem();
+    return `
+      <div class="poem-header" style="background:${p.color}">
+        <button class="poem-back" onclick="app.goHome()">
+          ${icon('arrowL', 'icon icon-sm')}
+          <span>Torna alle poesie</span>
+        </button>
+        <div class="poem-header-title">${esc(p.title)}</div>
+        <div class="poem-header-place">${esc(p.place)}</div>
+      </div>
+
+      <div class="tabs">
+        ${TABS.map(t => {
+          const active = this.tab === t.id;
+          const bg = active ? p.color : '#FBF5E6';
+          const br = active ? p.color : p.accent;
+          return `<button class="tab-btn ${active ? 'active' : ''}"
+                    style="background:${bg}; border-color:${br}"
+                    onclick="app.setTab('${t.id}')">
+                    ${icon(t.icon, 'icon')}<span>${esc(t.label)}</span>
+                  </button>`;
+        }).join('')}
+      </div>
+
+      <div class="content-card" style="border-color:${p.accent}">
+        ${this.renderTabContent()}
+      </div>
+
+      ${this.renderTabNav()}
+    `;
+  },
+
+  renderTabContent() {
+    switch (this.tab) {
+      case 'poesia': return this.renderTabPoesia();
+      case 'parafrasi': return this.renderTabParafrasi();
+      case 'metafore': return this.renderTabMetafore();
+      case 'riordina': return this.renderTabRiordina();
+      case 'crocette': return this.renderTabCrocette();
+      case 'scrivi': return this.renderTabScrivi();
+    }
+  },
+
+  renderTabPoesia() {
+    const p = this.getPoem();
+    const lines = p.lines.map(l => `<div class="poem-text-line">${esc(l) || '&nbsp;'}</div>`).join('');
+    return `
+      <div class="section-label" style="color:${p.color}">Leggi con calma</div>
+      <div class="poem-text-box" style="border-color:${p.accent}">
+        <div class="poem-text">${lines}</div>
+        <div class="poem-text-footer" style="border-color:${p.accent}">
+          — Giuseppe Ungaretti, ${esc(p.place)}
+        </div>
+      </div>
+      <div class="tip-box">
+        ${icon('bulb', 'icon icon-md tip-box-icon')}
+        <p class="tip-box-text">
+          <strong>Consiglio:</strong> leggi la poesia ad alta voce.
+          Non avere fretta. Poi passa alla scheda <strong>«Cosa vuol dire»</strong>.
+        </p>
+      </div>
+    `;
+  },
+
+  renderTabParafrasi() {
+    const p = this.getPoem();
+    const steps = p.parafrasiSteps.map((s, i) => `
+      <div class="step-item" style="border-left-color:${p.color}">
+        <div class="step-num" style="background:${p.color}">${i + 1}</div>
+        <div>
+          <div class="step-highlight" style="color:${p.color}">«${esc(s.highlight)}»</div>
+          <div class="step-explain">${esc(s.explain)}</div>
+        </div>
+      </div>
+    `).join('');
+    return `
+      <div class="section-label" style="color:${p.color}">Cosa vuol dire la poesia</div>
+      <div class="parafrasi-main">
+        <div class="label-mini" style="color:${p.color}">In parole semplici</div>
+        <p class="parafrasi-main-text">${esc(p.parafrasi)}</p>
+      </div>
+      <div class="label-mini" style="color:${p.color}; margin-bottom:0.8rem">Pezzo per pezzo</div>
+      <div class="step-list">${steps}</div>
+    `;
+  },
+
+  renderTabMetafore() {
+    const p = this.getPoem();
+    const cards = p.metaphors.map((m, mi) => {
+      const isOpen = this.metaphorOpen === mi;
+      const steps = m.steps.map((step, si) => {
+        const prevRevealed = si === 0 || this.metaphorRevealed[mi + '-' + (si - 1)];
+        const thisRevealed = this.metaphorRevealed[mi + '-' + si];
+        const revealed = si === 0 || prevRevealed || thisRevealed;
+        return `
+          <div class="met-step ${revealed ? '' : 'hidden'}">
+            <div class="met-step-num" style="background:${p.color}">${si + 1}</div>
+            <div class="met-step-text">${revealed ? esc(step) : '...'}</div>
+          </div>
+        `;
+      }).join('');
+
+      const allRevealed = m.steps.every((_, si) => this.metaphorRevealed[mi + '-' + si] || si === 0);
+      const nextBtn = !allRevealed ? `
+        <button class="met-next-btn" style="background:${p.color}" onclick="app.revealNextStep(${mi})">
+          Avanti ➜
+        </button>` : '';
+
+      return `
+        <div class="met-card" style="border-color:${p.accent}">
+          <button class="met-toggle ${isOpen ? 'open' : ''}"
+            style="${isOpen ? 'background:' + p.color : ''}"
+            onclick="app.toggleMetaphor(${mi})">
+            <div>
+              <div class="met-label">Metafora ${mi + 1}</div>
+              <div class="met-expr">«${esc(m.expression)}»</div>
+            </div>
+            <span class="met-arrow ${isOpen ? 'open' : ''}">${icon('arrowR', 'icon icon-md')}</span>
+          </button>
+          ${isOpen ? `
+            <div class="met-body">
+              <div class="met-meaning">
+                <div class="met-meaning-label" style="color:${p.color}">Vuol dire</div>
+                <div class="met-meaning-text">${esc(m.meaning)}</div>
+              </div>
+              <div class="met-steps">${steps}</div>
+              ${nextBtn}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="section-label" style="color:${p.color}">Le metafore spiegate</div>
+      <div class="met-intro">
+        ${icon('bulb', 'icon icon-md met-intro-icon')}
+        <p class="met-intro-text">
+          Una <strong>metafora</strong> è quando diciamo una cosa per farne capire un'altra.
+          Qui le scopriamo <strong>passo per passo</strong>. Clicca sui pulsanti per andare avanti.
+        </p>
+      </div>
+      ${cards}
+    `;
+  },
+
+  renderTabRiordina() {
+    const p = this.getPoem();
+    const ordered = this.getPoemState().reorder || [];
+    const available = p.shuffled.filter(l => !ordered.includes(l));
+
+    const orderedHtml = ordered.length === 0 ? `
+      <div class="ordered-empty">(qui compariranno i versi che scegli)</div>
+    ` : `
+      <div class="ordered-list">
+        ${ordered.map((line, i) => `
+          <button class="ordered-line" style="border-color:${p.accent}"
+            onclick="app.removeLine(${i})">
+            <div class="ordered-line-num" style="background:${p.color}">${i + 1}</div>
+            <div class="ordered-line-text">${esc(line)}</div>
+            ${icon('x', 'icon')}
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    const availableHtml = available.length === 0 ? '' : `
+      <div class="mini-label" style="color:${p.color}">Versi da mettere in ordine</div>
+      <div class="pool">
+        ${available.map(line => `
+          <button class="pool-chip" style="background:${p.accent}; border-color:${p.color}"
+            onclick="app.addLine(${JSON.stringify(line).replace(/"/g, '&quot;')})">
+            ${esc(line)}
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    let feedback = '';
+    if (this.reorderChecked) {
+      if (this.reorderCorrect) {
+        feedback = `
+          <div class="feedback-box success">
+            ${icon('check', 'icon icon-md feedback-icon')}
+            <div>
+              <div class="feedback-title">Bravissimo! 🎉</div>
+              <div class="feedback-text">I versi sono nell'ordine giusto.</div>
+            </div>
+          </div>
+        `;
+      } else {
+        feedback = `
+          <div class="feedback-box error">
+            ${icon('alert', 'icon icon-md feedback-icon')}
+            <div>
+              <div class="feedback-title">Non è ancora giusto. Riprova!</div>
+              <div class="feedback-text">
+                Suggerimento: torna alla scheda <strong>«La poesia»</strong> e guarda l'ordine.
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    return `
+      <div class="section-label" style="color:${p.color}">Rimetti in ordine i versi</div>
+      <div class="help-box">
+        <p class="help-box-text">
+          I versi sono mescolati. <strong>Clicca</strong> su un verso qui sotto per metterlo in ordine.
+          Se sbagli, clicca sul verso che hai messo per toglierlo.
+        </p>
+      </div>
+
+      <div class="mini-label" style="color:${p.color}">La tua poesia</div>
+      <div class="ordered-box" style="border-color:${p.accent}">${orderedHtml}</div>
+
+      ${availableHtml}
+
+      <div class="action-row">
+        <button class="btn-primary" style="background:${p.color}"
+          onclick="app.checkReorder()" ${available.length > 0 ? 'disabled' : ''}>
+          ${icon('check', 'icon')} Controlla
+        </button>
+        <button class="btn-secondary" style="color:${p.color}; border-color:${p.accent}"
+          onclick="app.resetReorder()">
+          ${icon('reset', 'icon')} Ricomincia
+        </button>
+      </div>
+
+      ${feedback}
+    `;
+  },
+
+  renderTabCrocette() {
+    const p = this.getPoem();
+    const answers = this.getPoemState().mc || [];
+
+    const cards = p.mc.map((q, qi) => {
+      const chosen = answers[qi];
+      const hasAnswer = chosen !== undefined && chosen !== null;
+
+      const opts = q.options.map((opt, oi) => {
+        const isChosen = chosen === oi;
+        const isCorrect = oi === q.correct;
+        let cls = 'opt', borderColor = p.accent, markerBg = p.accent;
+        if (hasAnswer) {
+          if (isCorrect) { cls += ' correct'; borderColor = '#3E6B2E'; markerBg = '#3E6B2E'; }
+          else if (isChosen) { cls += ' wrong'; borderColor = '#A0412E'; markerBg = '#A0412E'; }
+        }
+        if (isChosen) cls += ' chosen';
+        const marker = hasAnswer && isCorrect ? icon('check', 'icon icon-sm')
+          : (hasAnswer && isChosen ? icon('x', 'icon icon-sm')
+          : `<span>${String.fromCharCode(65 + oi)}</span>`);
+
+        return `
+          <button class="${cls}" style="border-color:${borderColor}"
+            onclick="app.setAnswer(${qi}, ${oi})">
+            <div class="opt-marker" style="background:${markerBg}">${marker}</div>
+            <span style="flex:1">${esc(opt)}</span>
+          </button>
+        `;
+      }).join('');
+
+      let explainHtml = '';
+      if (hasAnswer) {
+        const good = chosen === q.correct;
+        explainHtml = `
+          <div class="q-explain ${good ? 'good' : 'bad'}">
+            ${icon('bulb', 'icon q-explain-icon')}
+            <div>
+              ${good
+                ? '<strong>Bravo!</strong> ' + esc(q.explain)
+                : '<strong>Non proprio.</strong> La risposta giusta è «' + esc(q.options[q.correct]) + '». ' + esc(q.explain)}
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="q-card" style="border-color:${p.accent}">
+          <div class="q-header">
+            <div class="q-num" style="background:${p.color}">${qi + 1}</div>
+            <h3 class="q-text">${esc(q.q)}</h3>
+          </div>
+          <div class="options">${opts}</div>
+          ${explainHtml}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="section-label" style="color:${p.color}">Domande a crocette</div>
+      <div class="help-box">
+        <p class="help-box-text">
+          Leggi la domanda e scegli la risposta che pensi sia giusta.
+          Appena clicchi, scoprirai se è corretta.
+        </p>
+      </div>
+      <div class="q-cards">${cards}</div>
+    `;
+  },
+
+  renderTabScrivi() {
+    const p = this.getPoem();
+    const answers = this.getPoemState().open || [];
+
+    const cards = p.open.map((q, qi) => `
+      <div class="w-card" style="border-color:${p.accent}">
+        <div class="w-header">
+          <span class="w-icon" style="color:${p.color}">${icon('pen', 'icon icon-md')}</span>
+          <h3 class="w-text">${esc(q)}</h3>
+        </div>
+        <textarea class="w-textarea" rows="4" placeholder="Scrivi qui..."
+          style="border-color:${p.accent}"
+          onfocus="this.style.borderColor='${p.color}'"
+          onblur="this.style.borderColor='${p.accent}'"
+          oninput="app.setOpen(${qi}, this.value)">${esc(answers[qi] || '')}</textarea>
+        <div class="w-count" id="count-${qi}">${(answers[qi] || '').length} lettere scritte</div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="section-label" style="color:${p.color}">Scrivi tu la tua risposta</div>
+      <div class="help-box">
+        <p class="help-box-text">
+          Qui <strong>non ci sono risposte giuste o sbagliate</strong>.
+          Scrivi quello che pensi, anche con poche parole. Verrà tutto salvato.
+        </p>
+      </div>
+      ${cards}
+      <div class="final-box">
+        ${icon('check', 'icon icon-md final-icon')}
+        <p class="final-text">
+          Ottimo lavoro! Quando hai finito, clicca <strong>«Stampa PDF»</strong> in alto
+          per stampare tutto il tuo studio delle poesie.
+        </p>
+      </div>
+    `;
+  },
+
+  renderTabNav() {
+    const idx = TABS.findIndex(t => t.id === this.tab);
+    const prev = TABS[idx - 1];
+    const next = TABS[idx + 1];
+    const p = this.getPoem();
+    return `
+      <div class="tab-nav">
+        <button class="btn-secondary" style="color:${p.color}; border-color:${p.color}; background:#FBF5E6"
+          ${!prev ? 'disabled' : ''}
+          onclick="${prev ? `app.setTab('${prev.id}')` : ''}">
+          ${icon('arrowL', 'icon')}
+          <span>${prev ? esc(prev.label) : 'Indietro'}</span>
+        </button>
+        <div class="nav-pos">${idx + 1} / ${TABS.length}</div>
+        <button class="btn-primary" style="background:${p.color}"
+          ${!next ? 'disabled' : ''}
+          onclick="${next ? `app.setTab('${next.id}')` : ''}">
+          <span>${next ? esc(next.label) : 'Avanti'}</span>
+          ${icon('arrowR', 'icon')}
+        </button>
+      </div>
+    `;
+  },
+
+  // ============================================================
+  // VISTA DI STAMPA
+  // ============================================================
+  renderPrint() {
+    const today = new Date().toLocaleDateString('it-IT', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    const poemSections = POEMS.map(poem => {
+      const s = this.state[poem.id] || {};
+      const lines = poem.lines.map(l => `<div>${esc(l) || '&nbsp;'}</div>`).join('');
+
+      const reorderHtml = s.reorder && s.reorder.length > 0
+        ? `<ol>${s.reorder.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`
+        : `<p class="print-empty">— non svolto —</p>`;
+
+      const mcHtml = poem.mc.map((q, qi) => {
+        const ans = (s.mc || [])[qi];
+        const givenOpt = ans !== undefined ? poem.mc[qi].options[ans] : null;
+        const correctOpt = poem.mc[qi].options[q.correct];
+        const isRight = ans === q.correct;
+        return `
+          <div class="print-q">
+            <div class="print-q-text"><strong>${qi + 1}.</strong> ${esc(q.q)}</div>
+            <div class="print-q-given">
+              Risposta di Federico: ${givenOpt ? '«' + esc(givenOpt) + '»' : '— non risposta —'}
+              ${givenOpt ? (isRight ? ' ✓' : ' ✗') : ''}
+            </div>
+            ${!isRight && givenOpt !== null ? `<div class="print-q-correct">Risposta corretta: «${esc(correctOpt)}»</div>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      const openHtml = poem.open.map((q, qi) => {
+        const ans = (s.open || [])[qi] || '';
+        return `
+          <div class="print-q">
+            <div class="print-q-text"><strong>${qi + 1}.</strong> ${esc(q)}</div>
+            <div class="print-q-open">${ans ? esc(ans) : '— non svolta —'}</div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <section class="print-poem">
+          <h2 class="print-poem-title">${esc(poem.title)}</h2>
+          <div class="print-poem-place">${esc(poem.place)}</div>
+          <div class="print-poem-text">${lines}</div>
+
+          <div class="print-section">
+            <div class="print-section-label">Cosa vuol dire</div>
+            <p>${esc(poem.parafrasi)}</p>
+          </div>
+
+          <div class="print-section">
+            <div class="print-section-label">Riordino dei versi</div>
+            ${reorderHtml}
+            <div class="print-tiny">Ordine corretto: ${esc(poem.correctOrder.join(' / '))}</div>
+          </div>
+
+          <div class="print-section">
+            <div class="print-section-label">Domande a crocette</div>
+            ${mcHtml}
+          </div>
+
+          <div class="print-section">
+            <div class="print-section-label">Risposte aperte</div>
+            ${openHtml}
+          </div>
+        </section>
+      `;
+    }).join('');
+
+    document.getElementById('print-root').innerHTML = `
+      <div class="print-cover">
+        <div class="print-header">Studio delle poesie di Giuseppe Ungaretti</div>
+        <div class="print-name">Alunno: Federico</div>
+        <div class="print-date">Data: ${today}</div>
+      </div>
+      ${poemSections}
+    `;
+  }
+};
+
+// Avvio
+document.addEventListener('DOMContentLoaded', () => app.init());
+// Esposizione esplicita su window per gli handler onclick inline
+window.app = app;
+</script>
+</body>
+</html>

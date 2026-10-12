@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ungaretti — Studio di Federico</title>
+<title>Ungaretti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -736,7 +736,6 @@ main { padding: 1.5rem 0 5rem; }
       </div>
       <div style="text-align:left">
         <div class="brand-title">Ungaretti</div>
-        <div class="brand-sub">Studio di Federico</div>
       </div>
     </button>
 
@@ -1306,7 +1305,7 @@ const app = {
     return `
       <section class="home-hero">
         <div class="hero-eyebrow">Le poesie di Giuseppe Ungaretti</div>
-        <h1 class="hero-title">Ciao Federico!</h1>
+        <h1 class="hero-title">Ciao!</h1>
         <p class="hero-sub">
           Qui puoi studiare <strong>4 poesie di Ungaretti</strong>.
           Scegli una poesia per iniziare. Quando hai finito, usa il pulsante
@@ -1737,7 +1736,7 @@ const app = {
           <div class="print-q">
             <div class="print-q-text"><strong>${qi + 1}.</strong> ${esc(q.q)}</div>
             <div class="print-q-given">
-              Risposta di Federico: ${givenOpt ? '«' + esc(givenOpt) + '»' : '— non risposta —'}
+              Risposta dell'alunno: ${givenOpt ? '«' + esc(givenOpt) + '»' : '— non risposta —'}
               ${givenOpt ? (isRight ? ' ✓' : ' ✗') : ''}
             </div>
             ${!isRight && givenOpt !== null ? `<div class="print-q-correct">Risposta corretta: «${esc(correctOpt)}»</div>` : ''}
@@ -1788,7 +1787,7 @@ const app = {
     document.getElementById('print-root').innerHTML = `
       <div class="print-cover">
         <div class="print-header">Studio delle poesie di Giuseppe Ungaretti</div>
-        <div class="print-name">Alunno: Federico</div>
+        <div class="print-name">Alunno: ______________________________</div>
         <div class="print-date">Data: ${today}</div>
       </div>
       ${poemSections}
